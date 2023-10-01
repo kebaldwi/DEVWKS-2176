@@ -5,8 +5,7 @@ This Repository is to be used in the DEVWKS-1176 workshop. The code is a set of 
 
 The repository will include scripts and examples with the following:
 
-1. Template Scripting in 
-   - Jinja2 Language
+1. Jinja2 Scripting
 2. DNA Center Templates
 3. YAML files for settings
 4. CSV files for settings
