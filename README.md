@@ -1,7 +1,7 @@
-# DEVWKS-1176 
+# DEVWKS-2176 
 ## Overview
 
-This Repository is to be used in the DEVWKS-1176 workshop. The code is a set of example use cases and is not considered a whole solution. This Repository is only to show the art of the possible.
+This Repository is to be used in the DEVWKS-2176 workshop. The code is a set of example use cases and is not considered a whole solution. This Repository is only to show the art of the possible.
 
 The repository will include scripts and examples with the following:
 
