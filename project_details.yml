@@ -1,0 +1,16 @@
+dna_center:
+  ip_address: 198.18.129.100
+  username: admin
+  password: C1sco12345
+
+devices_lab:
+  hostname: [PDX-RN]
+
+devices_info:
+  hostname: [PDX-RO, SP, NYC-RO]
+
+project:
+  name: Jenkins
+
+template:
+  name: cli_template.txt
