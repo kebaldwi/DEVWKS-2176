@@ -14,8 +14,8 @@ IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied.
 """
 
-__author__ = "Gabriel Zapodeanu TME, ENB"
-__email__ = "gzapodea@cisco.com"
+__author__ = "Keith Baldwin SE, CA-CoE"
+__email__ = "kebaldwi@cisco.com"
 __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2022 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
@@ -29,22 +29,36 @@ import yaml
 import base64
 import requests
 from pprint import pprint
-from github import Github
+from github import *
+from pathlib import Path  # used for relative path to "templates_jenkins" folder
 
 from datetime import datetime
 from dnacentersdk import DNACenterAPI
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth  # for Basic Auth
 
-load_dotenv('environment.env')
+#load_dotenv('environment.env')
 
+# project path
+project_details_path = Path(__file__).parent/'../DEVWKS-2176/project_details.yml'
+with open(project_details_path, 'r') as file:
+    project_data = yaml.safe_load(file)
+DNAC_URL = 'https://' + project_data['dna_center']['ip_address']
+DNAC_USER = project_data['dna_center']['username']
+DNAC_PASS = project_data['dna_center']['password']
+GITHUB_USERNAME = project_data['github']['username']
+GITHUB_TOKEN = project_data['github']['token']
+GITHUB_REPO = project_data['github']['repository']
+
+# Example from .env
+"""
 DNAC_URL = os.getenv('DNAC_URL')
 DNAC_USER = os.getenv('DNAC_USER')
 DNAC_PASS = os.getenv('DNAC_PASS')
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-
 GITHUB_REPO = 'dnacenter_day_n_inventory'
+"""
 
 os.environ['TZ'] = 'America/Los_Angeles'  # define the timezone for PST
 time.tzset()  # adjust the timezone, more info https://help.pythonanywhere.com/pages/SettingTheTimezone/
@@ -226,7 +240,6 @@ def main():
     logging.info('  App "device_inventory.py" run end: ' + date_time)
 
     return
-
 
 if __name__ == '__main__':
     main()

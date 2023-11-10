@@ -1,3 +1,12 @@
+project:
+  name: DEVWKS-2176
+
+template_info:
+  border:
+    templates: templates/8000v.txt
+  edge:
+    templates: templates/9000v_1.txt,templates/9000v_2.txt
+
 area_info:
   name: DevNet
   hierarchy: Global
@@ -8,39 +17,21 @@ building_info:
 floor_info:
   name: Floor-1-DevNet
 
-devices_info:
-  device_ips: [10.93.141.20, 10.93.141.28, 10.93.141.19]
-  device_roles: [control-plane, border, edge]
+devices_info_wired:
+  managementIP: [198.18.133.145,198.19.1.2,198.19.2.2]
+  device_roles: [border, edge]
 
-fabric_info:
-  name: Floor-1
-
-ip_transit_pool:
-  name: LO_transit_pool
-  type: Generic
-  subnet: 10.1.4.0/24
-  gateway: 10.1.4.1
-  dhcp_server: 10.93.141.46
-  address_family: IPv4
-
-l3_vn:
-  name: Servers
-
-control_plane_devices:
-  ip: [10.93.141.20]
+devices_info_wireless:
+  hostname: [198.18.134.100]
+  device_roles: [controller]
 
 border_devices:
-  ip: [10.93.141.28]
-  routing_protocol: BGP
-  internal_bgp_as: 65001
-  external_bgp_as: 65002
-  external_interface: TenGigabitEthernet1/1/1
-  transit_network: IP_Transit
-  transit_vlan: 602
+  ip: [198.18.133.145]
+  templates: 8000v.txt
+  routing_protocol: OSPF
+  internal_interfaces: GigabitEthernet0/1,GigabitEthernet0/2
 
 edge_devices:
-  ip: [10.93.141.19]
-
-auth_profile:
-  name: No Authentication
+  ip: [198.19.1.2,198.19.2.2]
+  templates: 9000v_1.txt,9000v_2.txt
 

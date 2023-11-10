@@ -408,7 +408,8 @@ def main():
                         #print(f"snmp RO id: {dcloud_snmp_RO_id}")
                         logging.info('SNMP RO Credentials exist for ' + site_hierarchy)
                         flag = True
-                    elif response['snmp_v2_read'][i]['description'] != dcloud_snmp_RO_desc and flag != True and i == len(response['cli']) - 1:
+                        break
+                    elif response['snmp_v2_read'][i]['description'] != dcloud_snmp_RO_desc and flag != True and i == len(response['snmp_v2_read']) - 1:
                         create_credentials(dnac_auth, '', '', dcloud_snmp_RO_desc, dcloud_snmp_RO)
                         logging.info('SNMP RO Credentials created for ' + site_hierarchy)
                         flag = False
@@ -420,7 +421,8 @@ def main():
                         #print(f"snmp RW id: {dcloud_snmp_RW_id}")
                         logging.info('SNMP RW Credentials exist for ' + site_hierarchy)
                         flag = True
-                    elif response['snmp_v2_write'][i]['description'] != dcloud_snmp_RW_desc and flag != True and i == len(response['cli']) - 1:
+                        break
+                    elif response['snmp_v2_write'][i]['description'] != dcloud_snmp_RW_desc and flag != True and i == len(response['snmp_v2_write']) - 1:
                         create_credentials(dnac_auth, '', '', '', '', dcloud_snmp_RW_desc, dcloud_snmp_RW)
                         logging.info('SNMP RW Credentials created for ' + site_hierarchy)
                         flag = False

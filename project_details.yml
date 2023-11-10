@@ -3,14 +3,10 @@ dna_center:
   username: admin
   password: C1sco12345
 
-devices_lab:
-  hostname: [PDX-RN]
-
-devices_info:
-  hostname: [PDX-RO, SP, NYC-RO]
+github:
+  username: kebaldwi
+  token: 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
+  repository: kebaldwi/devnet_test
 
 project:
-  name: Jenkins
-
-template:
-  name: cli_template.txt
+  name: DEVWKS-2176
