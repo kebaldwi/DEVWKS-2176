@@ -1,4 +1,4 @@
-device_inventory:
+POD-10-device_inventory:
 - hostname: c9300-1.dcloud.cisco.com
   device_ip: 198.19.1.2
   device_id: edd2b55e-9dca-42b5-be06-6738d1264b4a

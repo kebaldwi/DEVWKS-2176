@@ -163,9 +163,20 @@ def main():
             building_name = row['HierarchyBldg']
             floor_name = row['HierarchyFloor']
             address = row['HierarchyBldgAddress']
-            site_hierarchy = 'Global/' + area_name + '/' + building_name + '/' + floor_name
-            # Do something with the site_hierarchy variable
 
+            # Create the site hierarchy
+            #site_hierarchy = 'Global/' + area_name + '/' + building_name + '/' + floor_name
+            site_hierarchy = 'Global/'
+            if area_name:
+                site_hierarchy += area_name + '/'
+            if building_name:
+                site_hierarchy += building_name + '/'
+            if floor_name:
+                site_hierarchy += floor_name
+            # Remove trailing slash if it exists
+            if site_hierarchy.endswith('/'):
+                site_hierarchy = site_hierarchy[:-1]
+            
             # Create a DNACenterAPI "Connection Object"
             dnac_api = DNACenterAPI(username=DNAC_USER, password=DNAC_PASS, base_url=DNAC_URL, version='2.2.2.3', verify=False)
         
@@ -173,37 +184,38 @@ def main():
             dnac_auth = get_dnac_token(DNAC_AUTH)
         
             # create a new fabric at site
-            logging.info('  Creating new fabric at site:' + site_hierarchy)
+            logging.info('  Working on new campus at site: ' + site_hierarchy)
+
+            json_response = get_site_hierarchy(dnac_auth)
+            json_response = json.dumps(json_response)
+
             if area_name:
                 type = 'area'
                 parentHierarchy = parent_name
-                json_response = get_site_hierarchy(dnac_auth)
                 tgt_hierarchy = (f'{parent_name}/{area_name}')
                 if tgt_hierarchy in json_response:
-                    logging.info('  Site hierarchy already exists, skipping creation.')
+                    logging.info('  Site campus area already exists, skipping creation.')
                 else:
                     response = create_site(dnac_auth, type, parentHierarchy, area_name, address)
-                    logging.info('  Created new fabric at site:' + site_hierarchy)
+                    logging.info('  Created new campus area at site: ' + site_hierarchy)
             if building_name:
                 type = 'building'
                 parentHierarchy = (f"{parent_name}/{area_name}")
-                json_response = get_site_hierarchy(dnac_auth)
                 tgt_hierarchy = (f'{parent_name}/{area_name}/{building_name}')
                 if tgt_hierarchy in json_response:
-                    logging.info('  Site hierarchy already exists, skipping creation.')
+                    logging.info('  Site campus building already exists, skipping creation.')
                 else:
                     response = create_site(dnac_auth, type, parentHierarchy, building_name, address)
-                    logging.info('  Created new fabric at site:' + site_hierarchy)
+                    logging.info('  Created new campus building at site: ' + site_hierarchy)
             if floor_name:
                 type = 'floor'
                 parentHierarchy = (f"{parent_name}/{area_name}/{building_name}")
-                json_response = get_site_hierarchy(dnac_auth)
-                tgt_hierarchy = (f'{parent_name}/{area_name}/{building_name}{floor_name}')
+                tgt_hierarchy = (f'{parent_name}/{area_name}/{building_name}/{floor_name}')
                 if tgt_hierarchy in json_response:
-                    logging.info('  Site hierarchy already exists, skipping creation.')
+                    logging.info('  Site campus floor already exists, skipping creation.')
                 else:
                     response = create_site(dnac_auth, type, parentHierarchy, floor_name, address)
-                    logging.info('  Created new fabric at site:' + site_hierarchy)
+                    logging.info('  Created new campus floor at site: ' + site_hierarchy)
             time.sleep(15)
             address = ''
      

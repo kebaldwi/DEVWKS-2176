@@ -1,6 +1,0 @@
-##Shutdown Other Interface to create distribution from Cat9300-2
-!
-##disable port 0/0/1 for the templating lab
-int gi 0/0/1
-!
-int gi 0/0/2

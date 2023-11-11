@@ -49,6 +49,7 @@ DNAC_PASS = project_data['dna_center']['password']
 GITHUB_USERNAME = project_data['github']['username']
 GITHUB_TOKEN = project_data['github']['token']
 GITHUB_REPO = project_data['github']['repository']
+DEVNET_POD = project_data['project']['pod']
 
 # Example from .env
 """
@@ -167,22 +168,22 @@ def main():
     logging.info('  Collected the device inventory from Cisco DNA Center')
 
     # save device inventory to json and yaml formatted files
-    with open('inventory/device_inventory.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-device_inventory.json', 'w') as f:
         f.write(json.dumps(device_inventory))
-    logging.info('  Saved the device inventory to file "device_inventory.json"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-device_inventory.json"')
 
-    with open('inventory/device_inventory.yaml', 'w') as f:
-        f.write('device_inventory:\n' + yaml.dump(device_inventory, sort_keys=False))
-    logging.info('  Saved the device inventory to file "device_inventory.yaml"')
+    with open(f'inventory/{DEVNET_POD}-device_inventory.yaml', 'w') as f:
+        f.write(f'{DEVNET_POD}-device_inventory:\n' + yaml.dump(device_inventory, sort_keys=False))
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-device_inventory.yaml"')
 
     # save ap inventory to json and yaml formatted files
-    with open('inventory/ap_inventory.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-ap_inventory.json', 'w') as f:
         f.write(json.dumps(ap_inventory))
-    logging.info('  Saved the device inventory to file "ap_inventory.json"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-ap_inventory.json"')
 
-    with open('inventory/ap_inventory.yaml', 'w') as f:
-        f.write('ap_inventory:\n' + yaml.dump(ap_inventory, sort_keys=False))
-    logging.info('  Saved the device inventory to file "ap_inventory.yaml"')
+    with open(f'inventory/{DEVNET_POD}-ap_inventory.yaml', 'w') as f:
+        f.write(f'{DEVNET_POD}-ap_inventory:\n' + yaml.dump(ap_inventory, sort_keys=False))
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-ap_inventory.yaml"')
 
     # retrieve the device image compliance state
     image_non_compliant_devices = []
@@ -199,13 +200,13 @@ def main():
         logging.info('      ' + device['hostname'] + ', Site Hierarchy: ' + device['site'])
 
     # save non compliant devices to json and yaml formatted files
-    with open('inventory/non_compliant_devices.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-non_compliant_devices.json', 'w') as f:
         f.write(json.dumps(image_non_compliant_devices))
-    logging.info('  Saved the image non-compliant device inventory to file "non_compliant_devices.json"')
+    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-non_compliant_devices.json"')
 
-    with open('inventory/non_compliant_devices.yaml', 'w') as f:
-        f.write('non_compliant:\n' + yaml.dump(image_non_compliant_devices, sort_keys=False))
-    logging.info('  Saved the image non-compliant device inventory to file "non_compliant_devices.yaml" ')
+    with open(f'inventory/{DEVNET_POD}-non_compliant_devices.yaml', 'w') as f:
+        f.write(f'{DEVNET_POD}-non_compliant:\n' + yaml.dump(image_non_compliant_devices, sort_keys=False))
+    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-non_compliant_devices.yaml" ')
 
     # push all files to GitHub repo
 
@@ -222,19 +223,20 @@ def main():
     for filename in files_list:
         try:
             contents = repo.get_contents(filename)
-            repo.delete_file(contents.path, 'remove' + filename, contents.sha)
+            if '.txt' not in filename:
+                repo.delete_file(contents.path, 'remove' + filename, contents.sha)
         except:
-            print('File does not exist')
-
-        with open(filename) as f:
-            file_content = f.read()
-        file_bytes = file_content.encode('ascii')
-        base64_bytes = base64.b64encode(file_bytes)
-        logging.info('  GitHub push for file: ' + filename)
-
-        # create a file and commit n push
-        repo.create_file(filename, "committed by Jenkins - Device Inventory build", file_content)
-        logging.info('  GitHub push for file: ' + filename)
+            logging.info('  File does not exist: ' + filename)
+        
+        if '.txt' not in filename:
+            with open(filename) as f:
+                file_content = f.read()
+            file_bytes = file_content.encode('ascii')
+            base64_bytes = base64.b64encode(file_bytes)
+    
+            # create a file and commit n push
+            repo.create_file(filename, "committed by Jenkins - Device Inventory build", file_content)
+            logging.info('  GitHub push for file: ' + filename)
 
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('  App "device_inventory.py" run end: ' + date_time)

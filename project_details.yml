@@ -5,7 +5,7 @@ dna_center:
 
 github:
   username: kebaldwi
-  token: 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
+  token: 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
   repository: kebaldwi/devnet_test
   repository_paths:
     inventory: kebaldwi/devnet_test/inventory
@@ -14,3 +14,4 @@ github:
 
 project:
   name: DEVWKS-2176
+  pod: POD-10
