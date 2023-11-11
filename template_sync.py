@@ -103,27 +103,26 @@ def github_push():
 
     # searching for my repository
     repo = g.search_repositories(GITHUB_REPO)[0]
+    repo_tgt = repo.get_contents('templates/git_push')
 
     # update inventory files
     for filename in files_list:
         try:
-            contents = repo.get_contents(filename)
+            contents = repo.get_contents(f'templates/git_push/{filename}')
             repo.delete_file(contents.path, 'remove' + filename, contents.sha)
+            logging.info('  Deleting existing file: ' + filename)
         except:
-            print('File does not exist')
+            logging.info('  File does not exist: ' + filename)
 
         with open(filename) as f:
             file_content = f.read()
         file_bytes = file_content.encode('ascii')
         base64_bytes = base64.b64encode(file_bytes)
-        logging.info('  GitHub push for file: ' + filename)
 
         # create a file and commit n push
-        repo.create_file(filename, "committed by Jenkins - Device Inventory build", file_content)
+        repo.create_file(f'templates/git_push/{filename}', "committed by Jenkins - Device Inventory build", file_content)
         logging.info('  GitHub push for file: ' + filename)
     return
-
-
 
 def main():
     """
@@ -136,8 +135,9 @@ def main():
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     logging.info('  App "template_synch.py" run start, ' + current_time)
 
-    github_pull()
-    
+    #github_pull() # working
+    github_push()
+
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('  App "template_synch.py" run end: ' + date_time)
 
