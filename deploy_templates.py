@@ -210,14 +210,14 @@ def main():
                 "forcePushTemplate": True,
                 "targetInfo": [
                     {
-                        "id": device,
+                        "id": device_cfg,
                         "type": "MANAGED_DEVICE_HOSTNAME"
                     }
                 ]
             }
         response = dnac_api.configuration_templates.deploy_template_v2(payload=deploy_payload)
         task_id = response['response']['taskId']
-        logging.info('Deploying template to device: ' + device)
+        logging.info('Deploying template to device: ' + device_cfg)
         time.sleep(15)
     
         # retrieve the deployment status
@@ -225,24 +225,24 @@ def main():
         deployment_status = response['response']['isError']
         if deployment_status is False:
             deployment_report_info.append(
-                {'hostname': device, 'status': 'successful'}
+                {'hostname': device_cfg, 'status': 'successful'}
             )
         else:
             deployment_report_info.append(
-                {'hostname': device, 'status': 'not successful'}
+                {'hostname': device_cfg, 'status': 'not successful'}
             )
             
-    # save deployment report to file
-    deployment_report = {
-        'timestamp': current_time,
-        'template_content': cli_config_commands,
-        'report': deployment_report_info}
-    report_file_path = Path(__file__).parent/'../templates_jenkins/deployment_report.json'
-    with open(report_file_path, 'w', encoding='utf-8') as f:
-        f.write(json.dumps(deployment_report))
-    
-    logging.info('Deployment Report:')
-    logging.info(json.dumps(deployment_report))
+        # save deployment report to file
+        deployment_report = {
+            'timestamp': current_time,
+            'template_content': cli_config_commands,
+            'report': deployment_report_info}
+        report_file_path = Path(__file__).parent/f'../reports/{device_cfg}_deployment_report.json'
+        with open(report_file_path, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(deployment_report))
+        
+        logging.info(f'Deployment Report for {device_cfg}:')
+        logging.info(json.dumps(deployment_report))
 
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('End of Application "deploy_templates.py" Run: ' + date_time)

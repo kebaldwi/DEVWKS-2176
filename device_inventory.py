@@ -219,7 +219,6 @@ def main():
     repo = g.search_repositories(GITHUB_REPO)[0]
 
     # update inventory files
-
     for filename in files_list:
         try:
             contents = repo.get_contents(filename)
@@ -235,6 +234,7 @@ def main():
 
         # create a file and commit n push
         repo.create_file(filename, "committed by Jenkins - Device Inventory build", file_content)
+        logging.info('  GitHub push for file: ' + filename)
 
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('  App "device_inventory.py" run end: ' + date_time)

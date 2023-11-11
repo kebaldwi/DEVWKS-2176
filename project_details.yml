@@ -7,6 +7,10 @@ github:
   username: kebaldwi
   token: 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
   repository: kebaldwi/devnet_test
+  repository_paths:
+    inventory: kebaldwi/devnet_test/inventory
+    reports: kebaldwi/devnet_test/reports
+    templates: kebaldwi/devnet_test/templates
 
 project:
   name: DEVWKS-2176
