@@ -5,7 +5,7 @@ dna_center:
 
 github:
   username: kebaldwi
-  token: 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
+  token: replace_me
   repository: kebaldwi/devnet_test
   repository_paths:
     inventory: kebaldwi/devnet_test/inventory
