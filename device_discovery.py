@@ -116,64 +116,57 @@ def main():
             dcloud_snmp_RW_desc = row.get('DcloudSnmpRW-Desc','')
             dcloud_snmp_RW = row.get('DcloudSnmpRW','')
 
-            # get Cisco DNA Center Auth token
-            dnac_auth = get_dnac_token(DNAC_AUTH)
-
-            # Get the target site id 
-            TargetSiteId = get_target_site_id(dnac_auth, parent_name, area_name, building_name, floor_name)
-            # Get the site credentials
-            dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id = get_site_credentials(dnac_auth, dcloud_user, dcloud_snmp_RO_desc, dcloud_snmp_RW_desc)
-            response = get_netconf_credential(dnac_auth)
-            dcloud_netconf_id = response['response'][0]['id']
-
-            # ERROR HANDLING on credentials
-            if dcloud_user_id == "ERROR" or dcloud_snmp_RO_id == "ERROR" or dcloud_snmp_RW_id == "ERROR":
-                logging.info('CLI Credentials not found - repairing')
-                dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id = create_site_credentials(dnac_auth, TargetSiteId, dcloud_user, dcloud_password, dcloud_snmp_RO_desc, dcloud_snmp_RO, dcloud_snmp_RW_desc, dcloud_snmp_RW)
-                    
-            # Create the discovery if device_list is not empty and the device is not in the inventory
             if device_list:
+                # get Cisco DNA Center Auth token
+                dnac_auth = get_dnac_token(DNAC_AUTH)
+    
+                # Get the target site id 
+                TargetSiteId = get_target_site_id(dnac_auth, parent_name, area_name, building_name, floor_name)
+                # Get the site credentials
+                dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id = get_site_credentials(dnac_auth, dcloud_user, dcloud_snmp_RO_desc, dcloud_snmp_RW_desc)
+                response = get_netconf_credential(dnac_auth)
+                dcloud_netconf_id = response[0]['response'][0]['id']
+    
+                # ERROR HANDLING on credentials
+                if dcloud_user_id == "ERROR" or dcloud_snmp_RO_id == "ERROR" or dcloud_snmp_RW_id == "ERROR":
+                    logging.info('CLI Credentials not found - repairing')
+                    dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id = create_site_credentials(dnac_auth, TargetSiteId, dcloud_user, dcloud_password, dcloud_snmp_RO_desc, dcloud_snmp_RO, dcloud_snmp_RW_desc, dcloud_snmp_RW)
+                        
+                # Create the discovery if device_list is not empty and the device is not in the inventory
+                if device_list:
+                    # First see if the device is in the inventory
+                    device_inventory = get_device_list()
+                    devices = device_list.split(',')
+                    device_missing = []
 
-                # First see if the device is in the inventory
-                device_inventory = get_device_list()
-                devices = device_list.split(',')
-                device_missing = []
-                if devices > 1:
                     for device in devices:
                         if device not in device_inventory:
                             # Create the discovery
                             device_missing.append(device)
+                            logging.info('    Device ' + device + ' needs to be added to inventory')
                         else:
-                            logging.info('Device ' + device + ' already exists in inventory')
+                            logging.info('    Device ' + device + ' already exists in inventory')
                     if device_missing:
-                        response, status_code = create_discovery(DNAC_AUTH, site_hierarchy, device_missing, dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id, dcloud_netconf_id)
-                        if responsecheck in response['message'] and status_code == 202:
-                            logging.info('Discovery successfully created for ' + device_missing)
+                        response = create_discovery(dnac_auth, site_hierarchy, device_missing, dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id, dcloud_netconf_id)
+                        response = json.dumps(response)
+                        if 'taskId' in response:
+                            logging.info('    Discovery successfully created for ' + str(device_missing))
                         else:
-                            logging.info('Discovery failed to create for ' + device_missing)
+                            logging.info('    Discovery failed to create for ' + str(device_missing))
                         time.sleep(15)
-                else:
-                    if device_list not in device_inventory:
-                        # Create the discovery
-                        response, status_code = create_discovery(DNAC_AUTH, site_hierarchy, device_list, dcloud_user_id, dcloud_snmp_RO_id, dcloud_snmp_RW_id, dcloud_netconf_id)
-                        if responsecheck in response['message'] and status_code == 202:
-                            logging.info('Discovery successfully created for ' + device_list)
-                        else:
-                            logging.info('Discovery failed to create for ' + device_list)
-                        time.sleep(15)
+                    logging.info('    *** Waiting 2 mins for Discovery to finish ***')
+                    time.sleep(120)
+                    # assign the device to the site
+                    response, status_code = assign_device(dnac_auth, TargetSiteId, device_list) 
+                    if responsecheck in response['message'] and status_code == 202:
+                        logging.info('    Device successfully assigned to ' + site_hierarchy)
                     else:
-                        logging.info('Device ' + device_list + ' already exists in inventory')
-                
-                # assign the device to the site
-                response, status_code = assign_device(dnac_auth, TargetSiteId, device_list) 
-                if responsecheck in response['message'] and status_code == 202:
-                    logging.info('Device successfully assigned to ' + site_hierarchy)
-                else:
-                    logging.info('Device failed to assign to ' + site_hierarchy)
-                
-                device_inventory()
-                time.sleep(15)
+                        logging.info('    Device failed to assign to ' + site_hierarchy)
+                    
+                    time.sleep(15)
     
+    #get_device_inventory()
+
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('  App "device_discovery.py" end, : ' + date_time)
 

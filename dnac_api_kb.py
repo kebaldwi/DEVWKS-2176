@@ -320,7 +320,7 @@ def get_site_credentials(dnac_token,dcloud_user, dcloud_snmp_RO_desc, dcloud_snm
                 logging.info('Acquired CLI Credential ID')
                 flag = True
                 break
-            else:
+            elif response['cli'][i]['description'] == dcloud_user and i == len(response['cli']) - 1:
                 dcloud_user_id = "ERROR"
                 logging.info('CLI Credential not found')
         # Get the site credential snmp RO id
@@ -328,10 +328,10 @@ def get_site_credentials(dnac_token,dcloud_user, dcloud_snmp_RO_desc, dcloud_snm
         for i in range(len(response['snmp_v2_read'])):
             if response['snmp_v2_read'][i]['description'] == dcloud_snmp_RO_desc:
                 dcloud_snmp_RO_id = response['snmp_v2_read'][i]['id']
-                logging.info('SNMP RO Credentials exist for ')
+                logging.info('Acquired SNMP RO Credential ID')
                 flag = True
                 break
-            else:
+            elif response['snmp_v2_read'][i]['description'] != dcloud_snmp_RO_desc and i == len(response['snmp_v2_read']) - 1:
                 dcloud_snmp_RO_id = "ERROR"
                 logging.info('SNMP RO Credentials not found')
         # Get the site credential snmp RW id
@@ -339,10 +339,10 @@ def get_site_credentials(dnac_token,dcloud_user, dcloud_snmp_RO_desc, dcloud_snm
         for i in range(len(response['snmp_v2_write'])):
             if response['snmp_v2_write'][i]['description'] == dcloud_snmp_RW_desc:
                 dcloud_snmp_RW_id = response['snmp_v2_write'][i]['id']
-                logging.info('SNMP RW Credentials exist for ')
+                logging.info('Acquired SNMP RW Credential ID ')
                 flag = True
                 break
-            else:
+            elif response['snmp_v2_write'][i]['description'] != dcloud_snmp_RW_desc and i == len(response['snmp_v2_write']) - 1:
                 dcloud_snmp_RW_id = "ERROR"
                 logging.info('SNMP RW Credentials not found')
         break
@@ -568,7 +568,7 @@ def get_device_list():
     return device_inventory, ap_inventory
 
 # device_inventory
-def device_inventory():
+def get_device_inventory():
     # project path
     project_details_path = Path(__file__).parent/'../DEVWKS-2176/project_details.yml'
     with open(project_details_path, 'r') as file:
@@ -728,18 +728,18 @@ def create_discovery(dnac_token, site_hierarchy, device_list, dcloud_user_id, dc
     :return: response in JSON
     """
     DiscoveryName = re.sub(r'\s', '', site_hierarchy)
-    device_list_split = device_list.split(',')
+    #device_list_split = device_list.split(',')
     DeviceRange = ""
-    if len(device_list_split) > 1:
+    if len(device_list) > 1:
         DiscoveryType = 'Multi Range'
-        for d in range(len(device_list_split)):
+        for d in range(len(device_list)):
             if d == 0:
-                DeviceRange += DeviceRange + device_list_split[d] + '-' + device_list_split[d]
+                DeviceRange = DeviceRange + device_list[d] + '-' + device_list[d]
             else:
-                DeviceRange += DeviceRange + ',' + device_list_split[d] + '-' + device_list_split[d]
+                DeviceRange = DeviceRange + ',' + device_list[d] + '-' + device_list[d]
     else:
         DiscoveryType = 'Range'
-        DeviceRange += DeviceRange + device_list + '-' + device_list
+        DeviceRange = DeviceRange + device_list[0] + '-' + device_list[0]
 
     payload = {
         "name": DiscoveryName,
@@ -760,7 +760,7 @@ def create_discovery(dnac_token, site_hierarchy, device_list, dcloud_user_id, dc
     header = {'content-type': 'application/json', 'x-auth-token': dnac_token}
     response = requests.post(url, data=json.dumps(payload), headers=header, verify=False)
     response_json = response.json()
-    return response_json, response.status_code
+    return response_json
 
 # assign_device_to_site
 def assign_device(dnac_auth, TargetSiteId, device_list):
@@ -772,24 +772,17 @@ def assign_device(dnac_auth, TargetSiteId, device_list):
     :return: response in JSON
     """
     device_list_split = device_list.split(',')
-    Devices = ""
-    if len(device_list_split) > 1:
-        for d in range(len(device_list_split)):
-            if d == 0:
-                Devices = '{ "ip": "' + device_list_split[d] + '" }'
-            else:
-                Devices = Devices + ',' + '{ "ip": "' + device_list_split[d] + '" }'
-    else:
-        Devices = '{ "ip": "' + device_list + '" }'
-    
+    Devices = []
+    for d in range(len(device_list_split)):
+        Devices.append({'ip': device_list_split[d]})
     # assign the device to the site
     payload = { 
-        "device": [ Devices ] 
+        "device": Devices 
         }
-    
+    payload = json.dumps(payload)
     url = DNAC_URL + f'/dna/system/api/v1/site/{TargetSiteId}/device'
     header = {'content-type': 'application/json', 'x-auth-token': dnac_auth}
-    response = requests.post(url, data=json.dumps(payload), headers=header, verify=False)
+    response = requests.post(url, data=payload, headers=header, verify=False)
     response_json = response.json()
     return response_json, response.status_code
 
