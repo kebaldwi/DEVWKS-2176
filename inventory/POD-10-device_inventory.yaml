@@ -5,16 +5,16 @@ POD-10-device_inventory:
   version: 17.9.2
   device_family: Cisco Catalyst 9300 Switch
   role: ACCESS
-  site: Global/DNAC Template Lab/Building/Floor 1
-  site_id: 0e17f23b-2226-4c73-8c11-6ccad7d4ae8d
+  site: Global/DevNet/California/Building 10/Floor 1
+  site_id: e66fadc4-7ee5-4f1d-a017-13418cafffd5
 - hostname: c9300-2.dcloud.cisco.com
   device_ip: 198.19.2.2
   device_id: f945d86f-88de-4069-a04c-838e210833dd
   version: 17.9.2
   device_family: Cisco Catalyst 9300 Switch
   role: ACCESS
-  site: Global/DNAC Template Lab/Building/Floor 1
-  site_id: 0e17f23b-2226-4c73-8c11-6ccad7d4ae8d
+  site: Global/DevNet/California/Building 10/Floor 1
+  site_id: e66fadc4-7ee5-4f1d-a017-13418cafffd5
 - hostname: C9800-WLC.dcloud.cisco.com
   device_ip: 198.18.134.100
   device_id: 3f8e9a3b-7063-467b-9078-9133fee81bb2
@@ -29,5 +29,5 @@ POD-10-device_inventory:
   version: 17.9.2a
   device_family: Cisco 4331 Integrated Services Router
   role: BORDER ROUTER
-  site: Global/DNAC Template Lab/Building/Floor 1
-  site_id: 0e17f23b-2226-4c73-8c11-6ccad7d4ae8d
+  site: Global/DevNet/California/Building 10/Floor 2
+  site_id: cf18086a-a87c-4854-8095-3ce5847b655c
