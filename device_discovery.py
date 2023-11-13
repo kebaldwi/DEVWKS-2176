@@ -27,12 +27,13 @@ import time
 import yaml
 import base64
 import requests
+import datetime
+
 from dnac_api_kb import *
 from pprint import pprint
 from github import *
 from pathlib import Path  # used for relative path to "templates_jenkins" folder
 
-from datetime import datetime
 from dnacentersdk import DNACenterAPI
 #from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth  # for Basic Auth
@@ -74,6 +75,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
     responsecheck = "has been accepted"
     logging.info('  App "device_discovery.py" run start, ' + current_time)
 

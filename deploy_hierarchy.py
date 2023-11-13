@@ -34,8 +34,8 @@ import csv
 from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
 #from dotenv import load_dotenv
 from dnacentersdk import DNACenterAPI
-from datetime import datetime
 from pprint import pprint
+from datetime import datetime
 from requests.auth import HTTPBasicAuth  # for Basic Auth
 from pathlib import Path  # used for relative path to "templates_jenkins" folder
 
@@ -47,6 +47,7 @@ time.tzset()  # adjust the timezone, more info https://help.pythonanywhere.com/p
 # logging, debug level, to file {application_run.log}
 logging.basicConfig(level=logging.INFO)
 current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
 logging.info('App "deploy_hierarchy.py" Start, ' + current_time)
 
 # project path

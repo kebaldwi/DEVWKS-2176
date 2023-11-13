@@ -30,6 +30,7 @@ import logging
 import datetime
 import yaml
 import csv
+import datetime
 
 from urllib3.exceptions import InsecureRequestWarning  # for insecure https warnings
 #from dotenv import load_dotenv
@@ -47,6 +48,7 @@ time.tzset()  # adjust the timezone, more info https://help.pythonanywhere.com/p
 # logging, debug level, to file {application_run.log}
 logging.basicConfig(level=logging.INFO)
 current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
 logging.info('App "deploy_settings.py" Start, ' + current_time)
 
 # project path

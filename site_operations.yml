@@ -1,5 +1,6 @@
 project:
   name: DEVWKS-2176
+  pod: POD-10
 
 template_info:
   border:
@@ -19,7 +20,7 @@ floor_info:
 
 devices_info_wired:
   managementIP: [198.18.133.145,198.19.1.2,198.19.2.2]
-  device_roles: [border, edge]
+  device_roles: [border, edge, edge]
 
 devices_info_wireless:
   hostname: [198.18.134.100]

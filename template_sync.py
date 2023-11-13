@@ -35,10 +35,11 @@ import time
 import yaml
 import base64
 import requests
+import datetime
+
 from pprint import pprint
 from github import *
 from pathlib import Path  # used for relative path to "templates_jenkins" folder
-
 from datetime import datetime
 from dnacentersdk import DNACenterAPI
 #from dotenv import load_dotenv
@@ -133,10 +134,11 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
     logging.info('  App "template_synch.py" run start, ' + current_time)
 
     #github_pull() # working
-    github_push()
+    #github_push() # working
 
     date_time = str(datetime.now().replace(microsecond=0))
     logging.info('  App "template_synch.py" run end: ' + date_time)

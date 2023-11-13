@@ -28,12 +28,14 @@ import time
 import yaml
 import base64
 import requests
+import datetime
+
 from pprint import pprint
 from github import *
 from pathlib import Path  # used for relative path to "templates_jenkins" folder
 
-from datetime import datetime
 from dnacentersdk import DNACenterAPI
+from datetime import datetime
 #from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth  # for Basic Auth
 
@@ -101,6 +103,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
     logging.info('  App "device_inventory.py" run start, ' + current_time)
 
     # create a DNACenterAPI "Connection Object" to use the Python SDK
@@ -168,22 +171,22 @@ def main():
     logging.info('  Collected the device inventory from Cisco DNA Center')
 
     # save device inventory to json and yaml formatted files
-    with open(f'inventory/{DEVNET_POD}-device_inventory.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_device_inventory.json', 'w') as f:
         f.write(json.dumps(device_inventory))
-    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-device_inventory.json"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-{date_time_str}_device_inventory.json"')
 
-    with open(f'inventory/{DEVNET_POD}-device_inventory.yaml', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_device_inventory.yaml', 'w') as f:
         f.write(f'{DEVNET_POD}-device_inventory:\n' + yaml.dump(device_inventory, sort_keys=False))
-    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-device_inventory.yaml"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-{date_time_str}_device_inventory.yaml"')
 
     # save ap inventory to json and yaml formatted files
-    with open(f'inventory/{DEVNET_POD}-ap_inventory.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_ap_inventory.json', 'w') as f:
         f.write(json.dumps(ap_inventory))
-    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-ap_inventory.json"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-{date_time_str}_ap_inventory.json"')
 
-    with open(f'inventory/{DEVNET_POD}-ap_inventory.yaml', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_ap_inventory.yaml', 'w') as f:
         f.write(f'{DEVNET_POD}-ap_inventory:\n' + yaml.dump(ap_inventory, sort_keys=False))
-    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-ap_inventory.yaml"')
+    logging.info(f'  Saved the device inventory to file "{DEVNET_POD}-{date_time_str}_ap_inventory.yaml"')
 
     # retrieve the device image compliance state
     image_non_compliant_devices = []
@@ -200,13 +203,13 @@ def main():
         logging.info('      ' + device['hostname'] + ', Site Hierarchy: ' + device['site'])
 
     # save non compliant devices to json and yaml formatted files
-    with open(f'inventory/{DEVNET_POD}-non_compliant_devices.json', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_non_compliant_devices.json', 'w') as f:
         f.write(json.dumps(image_non_compliant_devices))
-    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-non_compliant_devices.json"')
+    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-{date_time_str}_non_compliant_devices.json"')
 
-    with open(f'inventory/{DEVNET_POD}-non_compliant_devices.yaml', 'w') as f:
+    with open(f'inventory/{DEVNET_POD}-{date_time_str}_non_compliant_devices.yaml', 'w') as f:
         f.write(f'{DEVNET_POD}-non_compliant:\n' + yaml.dump(image_non_compliant_devices, sort_keys=False))
-    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-non_compliant_devices.yaml" ')
+    logging.info(f'  Saved the image non-compliant device inventory to file "{DEVNET_POD}-{date_time_str}_non_compliant_devices.yaml" ')
 
     # push all files to GitHub repo
 
