@@ -137,7 +137,7 @@ def main():
     date_time_str = str(datetime.now().strftime('%m-%d-%Y_%H-%M-%S'))
     logging.info('  App "template_synch.py" run start, ' + current_time)
 
-    #github_pull() # working
+    github_pull() # working
     #github_push() # working
 
     date_time = str(datetime.now().replace(microsecond=0))
