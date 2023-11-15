@@ -78,6 +78,7 @@ def github_pull():
 
     os.chdir('templates')
     files_list = os.listdir()
+    permissions = 0o755
 
     # authenticate to github
     g = Github(GITHUB_USERNAME, GITHUB_TOKEN)
@@ -91,6 +92,10 @@ def github_pull():
         with open(filename.name, 'wb') as f:
             f.write(file_content)
         logging.info('  GitHub pull for file: ' + filename.name)
+
+    # Change the permissions of the folder
+    os.chdir('../')
+    os.chmod('../DEVWKS-2176/templates', permissions)
     return
 
 # push all files to GitHub repo
