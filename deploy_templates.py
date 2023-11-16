@@ -115,7 +115,7 @@ def main():
         time.sleep(15)
         response = dnac_api.configuration_templates.get_projects(name=TEMPLATE_PROJECT_NAME)
     else:
-        logging.info('  Template Project Name: ' + TEMPLATE_PROJECT_NAME + 'already exists')
+        logging.info('  Template Project Name: ' + TEMPLATE_PROJECT_NAME + ' already exists')
     project_id = response[0]['id']
     logging.info('    Template Project Name: ' + TEMPLATE_PROJECT_NAME)
     logging.info('    Template Project ID : ' + project_id)
